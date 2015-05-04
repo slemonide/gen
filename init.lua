@@ -19,12 +19,12 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	local data = vm:get_data()
 	local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
  
-	for x=minp.x,maxp.x,1 do
-		for z=minp.z,maxp.z,1 do
-			for y=minp.y,maxp.y,1 do
+	for x=minp.x,maxp.x do
+		local n = x/10
+		local land_base = 10*math.abs(n + math.sin(n) + math.sin(n + math.sin(n)))
+		for z=minp.z,maxp.z do
+			for y=minp.y,maxp.y do
 				local p_pos = area:index(x, y, z)
-				local x = x/10
-				local land_base = 10*math.abs(x + math.sin(x) + math.sin(x + math.sin(x)))
 				if y == math.floor(land_base) then
 					data[p_pos] = c_dirt_with_grass
 				elseif y == math.floor(land_base) - 1 then
