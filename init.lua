@@ -20,8 +20,13 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
  
 	for x=minp.x,maxp.x do
-		local n = x/10
-		local land_base = 10*math.abs(n + math.sin(n) + math.sin(n + math.sin(n)))
+		local n = x/4000
+		local a = 2
+                local land_base = 0
+		for k=1,50 do
+			land_base = land_base + 300*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
+		end
+                -- local land_base = 10*math.abs(n + math.sin(n) + math.sin(n + math.sin(n)))
 		for z=minp.z,maxp.z do
 			for y=minp.y,maxp.y do
 				local p_pos = area:index(x, y, z)
