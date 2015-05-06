@@ -1,5 +1,3 @@
--- fairly imperfect code
-
 local ws_lists = {}
 local function get_ws_list(a,x)
 	ws_lists[a] = ws_lists[a] or {}
@@ -9,7 +7,7 @@ local function get_ws_list(a,x)
 	end
 	v = {}
 	for x=x,x+79 do
-		local n = x/4000
+		local n = x/20000
 		local y = 0
 		for k=1,500 do
 			y = y + 1300*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
@@ -20,13 +18,14 @@ local function get_ws_list(a,x)
 	return v
 end
 
-local c_air = minetest.get_content_id("air")
 local c_water = minetest.get_content_id("default:water_source")
 local c_stone = minetest.get_content_id("default:stone")
 local c_dirt = minetest.get_content_id("default:dirt")
 local c_dirt_with_grass = minetest.get_content_id("default:dirt_with_grass")
 local c_sand = minetest.get_content_id("default:sand")
 local c_sandstone = minetest.get_content_id("default:sandstone")
+local c_snow = minetest.get_content_id("default:snowblock")
+local c_ice = minetest.get_content_id("default:ice")
 
 minetest.register_on_generated(function(minp, maxp, seed)
 
@@ -54,18 +53,22 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				if y < land_base-1 then
 					data[p_pos] = c_stone
 				elseif y == math.floor(land_base) then
-					if y > 30 then
+					if y > 500 then
+						data[p_pos] = c_snow
+					elseif y > 0 then
 						data[p_pos] = c_dirt_with_grass
 					else
 						data[p_pos] = c_sand
 					end
 				elseif y == math.floor(land_base) - 1 then
-					if y > 29 then
-				 		data[p_pos] = c_dirt
+					if y > 500 then
+						data[p_pos] = c_ice
+					elseif y > 0 then
+						data[p_pos] = c_dirt
 					else
 						data[p_pos] = c_sandstone
 					end
-				elseif y < 30 then
+				elseif y < -3 then
 					data[p_pos] = c_water
 				end
 			end
