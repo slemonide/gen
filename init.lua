@@ -1,3 +1,5 @@
+local SIZE = 10
+
 local ws_lists = {}
 local function get_ws_list(a,x)
 	ws_lists[a] = ws_lists[a] or {}
@@ -7,10 +9,10 @@ local function get_ws_list(a,x)
 	end
 	v = {}
 	for x=x,x+79 do
-		local n = x/20000
+		local n = x/(20*SIZE)
 		local y = 0
-		for k=1,500 do
-			y = y + 1300*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
+		for k=1,5*SIZE do
+			y = y + 13*SIZE*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
 		end
 		v[x] = y
 	end
@@ -53,7 +55,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				if y < land_base-1 then
 					data[p_pos] = c_stone
 				elseif y == math.floor(land_base) then
-					if y > 500 then
+					if y > 5*SIZE then
 						data[p_pos] = c_snow
 					elseif y > 0 then
 						data[p_pos] = c_dirt_with_grass
@@ -61,7 +63,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 						data[p_pos] = c_sand
 					end
 				elseif y == math.floor(land_base) - 1 then
-					if y > 500 then
+					if y > 5*SIZE then
 						data[p_pos] = c_ice
 					elseif y > 0 then
 						data[p_pos] = c_dirt
