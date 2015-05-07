@@ -1,23 +1,23 @@
-local SIZE = 10
+local SIZE = 1
 
 local ws_lists = {}
 local function get_ws_list(a,x)
-	ws_lists[a] = ws_lists[a] or {}
-	local v = ws_lists[a][x]
-	if v then
-		return v
-	end
-	v = {}
-	for x=x,x+79 do
-		local n = x/(20*SIZE)
-		local y = 0
-		for k=1,5*SIZE do
-			y = y + 13*SIZE*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
-		end
-		v[x] = y
-	end
-	ws_lists[a][x] = v
-	return v
+        ws_lists[a] = ws_lists[a] or {}
+        local v = ws_lists[a][x]
+        if v then
+                return v
+        end
+        v = {}
+        for x=x,x+79 do
+                local n = x/(20*SIZE)
+                local y = 0
+                for k=1,5*SIZE do
+                        y = y + 13*SIZE*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
+                end
+                v[x] = y
+        end
+        ws_lists[a][x] = v
+        return v
 end
 
 local c_water = minetest.get_content_id("default:water_source")
@@ -49,13 +49,15 @@ minetest.register_on_generated(function(minp, maxp, seed)
 		local land_base = heightx[x]
 		-- local land_base = 10*math.abs(n + math.sin(n) + math.sin(n + math.sin(n)))
 		for z=minp.z,maxp.z do
-			local land_base = math.floor(land_base + heightz[z] + 0.5)
+			local land_base = land_base + heightz[z] + 0.5
+			land_base = land_base + SIZE*10*math.sin(((x/(SIZE*10))^2 + (z/(SIZE*10))^2)^(1/2))
+			land_base = math_floor(land_base)
 			for y=minp.y,maxp.y do
 				local p_pos = area:index(x, y, z)
 				if y < land_base-1 then
 					data[p_pos] = c_stone
 				elseif y == math.floor(land_base) then
-					if y > 5*SIZE then
+					if y > 9*SIZE then
 						data[p_pos] = c_snow
 					elseif y > 0 then
 						data[p_pos] = c_dirt_with_grass
@@ -63,7 +65,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 						data[p_pos] = c_sand
 					end
 				elseif y == math.floor(land_base) - 1 then
-					if y > 5*SIZE then
+					if y > 9*SIZE then
 						data[p_pos] = c_ice
 					elseif y > 0 then
 						data[p_pos] = c_dirt
