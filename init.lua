@@ -51,7 +51,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 		for z=minp.z,maxp.z do
 			local land_base = land_base + heightz[z] + 0.5
 			land_base = land_base + SIZE*10*math.sin(((x/(SIZE*10))^2 + (z/(SIZE*10))^2)^(1/2))
-			land_base = math_floor(land_base)
+			land_base = math.floor(land_base)
 			for y=minp.y,maxp.y do
 				local p_pos = area:index(x, y, z)
 				if y < land_base-1 then
