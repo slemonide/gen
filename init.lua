@@ -1,4 +1,26 @@
-local SIZE = 1
+local SIZE = minetest.setting_get("generator_size")
+local chunksize = minetest.setting_get("generator_size")
+
+if not chunksize then
+	chunksize = 5
+end
+
+if not SIZE then
+	SIZE = 100
+end
+
+
+
+-- Safe size (positive and absolute)
+local ssize = math.ceil(math.abs(SIZE))
+
+-- Heights
+local h = {}
+h.sea = -1
+h.beach = 0
+h.ice = ssize * (3/4)
+
+local recursion_depth = math.ceil(math.abs(SIZE)/5)
 
 local ws_lists = {}
 local function get_ws_list(a,x)
@@ -8,11 +30,11 @@ local function get_ws_list(a,x)
                 return v
         end
         v = {}
-        for x=x,x+79 do
-                local n = x/(20*SIZE)
+        for x=x,x + (chunksize*16 - 1) do
+                local n = x/(4*SIZE)
                 local y = 0
-                for k=1,5*SIZE do
-                        y = y + 13*SIZE*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
+                for k=1,ssize do
+                        y = y + SIZE*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
                 end
                 v[x] = y
         end
@@ -47,32 +69,31 @@ minetest.register_on_generated(function(minp, maxp, seed)
 
 	for x=minp.x,maxp.x do
 		local land_base = heightx[x]
-		-- local land_base = 10*math.abs(n + math.sin(n) + math.sin(n + math.sin(n)))
 		for z=minp.z,maxp.z do
-			local land_base = land_base + heightz[z] + 0.5
-			land_base = land_base + SIZE*10*math.sin(((x/(SIZE*10))^2 + (z/(SIZE*10))^2)^(1/2))
+			local land_base = land_base + heightz[z]
+			land_base = land_base + SIZE/3*math.sin(((x/(SIZE))^2 + (z/(SIZE))^2)^(1/2))
 			land_base = math.floor(land_base)
 			for y=minp.y,maxp.y do
 				local p_pos = area:index(x, y, z)
-				if y < land_base-1 then
+				if y < land_base - 1 then
 					data[p_pos] = c_stone
 				elseif y == math.floor(land_base) then
-					if y > 9*SIZE then
+					if y > h.ice then
 						data[p_pos] = c_snow
-					elseif y > 0 then
+					elseif y > h.beach then
 						data[p_pos] = c_dirt_with_grass
 					else
 						data[p_pos] = c_sand
 					end
 				elseif y == math.floor(land_base) - 1 then
-					if y > 9*SIZE then
+					if y > h.ice then
 						data[p_pos] = c_ice
-					elseif y > 0 then
+					elseif y > h.beach then
 						data[p_pos] = c_dirt
 					else
 						data[p_pos] = c_sandstone
 					end
-				elseif y < -3 then
+				elseif y < h.sea then
 					data[p_pos] = c_water
 				end
 			end

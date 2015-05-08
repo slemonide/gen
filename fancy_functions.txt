@@ -1,0 +1,3 @@
+A list of fancy functions:
+	10*math.abs(n + math.sin(n) + math.sin(n + math.sin(n)))
+	SIZE*10*math.sin(((x/(SIZE*10))^2 + (z/(SIZE*10))^2)^(1/2))
