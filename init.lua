@@ -6,7 +6,7 @@ if not chunksize then
 end
 
 if not SIZE then
-	SIZE = 100
+	SIZE = 50
 end
 
 
@@ -18,9 +18,9 @@ local ssize = math.ceil(math.abs(SIZE))
 local h = {}
 h.sea = -1
 h.beach = 0
-h.ice = ssize * (3/4)
+h.ice = ssize * (15/16)
 
-local recursion_depth = math.ceil(math.abs(SIZE)/5)
+local recursion_depth = math.ceil(math.abs(SIZE)/10)
 
 local function do_ws_func(depth, a, x)
 	local n = x/(4*SIZE)
@@ -47,6 +47,15 @@ local function get_ws_list(a,x)
         return v
 end
 
+local function get_distance(x,z,x0,z0)
+	if not (x0 or z0) then
+		x0 = 0
+		z0 = 0
+	end
+	y = (((x - x0)/(SIZE))^2 + ((z - z0)/(SIZE))^2)^(1/2)
+	return y
+end
+
 local c_water = minetest.get_content_id("default:water_source")
 local c_stone = minetest.get_content_id("default:stone")
 local c_dirt = minetest.get_content_id("default:dirt")
@@ -55,6 +64,7 @@ local c_sand = minetest.get_content_id("default:sand")
 local c_sandstone = minetest.get_content_id("default:sandstone")
 local c_snow = minetest.get_content_id("default:snowblock")
 local c_ice = minetest.get_content_id("default:ice")
+local c_lava = minetest.get_content_id("default:lava_source")
 
 minetest.register_on_generated(function(minp, maxp, seed)
 
@@ -76,7 +86,12 @@ minetest.register_on_generated(function(minp, maxp, seed)
 		local land_base = heightx[x]
 		for z=minp.z,maxp.z do
 			local land_base = land_base + heightz[z]
-			land_base = land_base + SIZE/3*math.sin(((x/(SIZE))^2 + (z/(SIZE))^2)^(1/2))
+			land_base = land_base + SIZE/3*math.sin(get_distance(x,z))
+
+			if SIZE*math.cos(get_distance(x/SIZE,z,100,-1000)) - land_base > SIZE then
+				land_base = land_base + SIZE/5*math.sin(get_distance(x,z,1230,-51234)/SIZE) + SIZE/5*math.sin((x + y)/SIZE)
+			end
+
 			land_base = math.floor(land_base)
 			for y=minp.y,maxp.y do
 				local p_pos = area:index(x, y, z)
