@@ -1,5 +1,5 @@
 local SIZE = minetest.setting_get("generator_size")
-local chunksize = minetest.setting_get("generator_size")
+local chunksize = minetest.setting_get("chunksize")
 
 if not chunksize then
 	chunksize = 5
