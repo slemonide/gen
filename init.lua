@@ -6,7 +6,7 @@ if not chunksize then
 end
 
 if not SIZE then
-	SIZE = 50
+	SIZE = 350
 end
 
 
@@ -18,7 +18,7 @@ local ssize = math.ceil(math.abs(SIZE))
 local h = {}
 h.sea = -1
 h.beach = 0
-h.ice = ssize * (15/16)
+h.ice = ssize * (3/4)
 
 local recursion_depth = math.ceil(math.abs(SIZE)/10)
 
