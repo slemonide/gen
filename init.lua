@@ -22,6 +22,15 @@ h.ice = ssize * (3/4)
 
 local recursion_depth = math.ceil(math.abs(SIZE)/5)
 
+local function do_ws_func(depth, a, x)
+	local n = x/(4*SIZE)
+	local y = 0
+	for k=1,depth do
+		y = y + SIZE*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
+	end
+	return y
+end
+
 local ws_lists = {}
 local function get_ws_list(a,x)
         ws_lists[a] = ws_lists[a] or {}
@@ -31,11 +40,7 @@ local function get_ws_list(a,x)
         end
         v = {}
         for x=x,x + (chunksize*16 - 1) do
-                local n = x/(4*SIZE)
-                local y = 0
-                for k=1,ssize do
-                        y = y + SIZE*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
-                end
+		local y = do_ws_func(ssize, a, x)
                 v[x] = y
         end
         ws_lists[a][x] = v
