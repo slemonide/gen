@@ -89,6 +89,9 @@ minetest.register_on_generated(function(minp, maxp, seed)
 			if SIZE*math.cos(get_distance(x/SIZE,z,100,-1000)) - land_base > SIZE then
 				land_base = land_base + SIZE/5*math.sin(get_distance(x,z,12*z,-51*x)/SIZE)
 			end
+			if math.sin(x/SIZE) + math.sin(z/SIZE) > 0 then
+				land_base = land_base + (math.sin(x/SIZE) + math.sin(z/SIZE))*SIZE
+			end
 			land_base = math.floor(land_base)
 			local beach = math.floor(SIZE/97*math.cos((x - z)*10/(SIZE))) -- Also used for ice
 			for y=minp.y,maxp.y do
