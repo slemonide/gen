@@ -6,23 +6,21 @@ if not chunksize then
 end
 
 if not SIZE then
-	SIZE = 1000
+	SIZE = -100
 end
-
-
 
 -- Safe size (positive and absolute)
 local ssize = math.ceil(math.abs(SIZE))
 
 -- Heights
 local h = {}
-h.sea = -1
+h.sea = 0
 h.ice = ssize * (3/4)
 
 local recursion_depth = math.ceil(math.abs(SIZE)/10)
 
 local function do_ws_func(depth, a, x)
-	local n = x/(4*SIZE)
+	local n = x/(16*SIZE)
 	local y = 0
 	for k=1,depth do
 		y = y + SIZE*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
@@ -63,7 +61,6 @@ local c_sand = minetest.get_content_id("default:sand")
 local c_sandstone = minetest.get_content_id("default:sandstone")
 local c_snow = minetest.get_content_id("default:snowblock")
 local c_ice = minetest.get_content_id("default:ice")
-local c_grass = minetest.get_content_id("default:grass_1")
 
 minetest.register_on_generated(function(minp, maxp, seed)
 
@@ -89,21 +86,16 @@ minetest.register_on_generated(function(minp, maxp, seed)
 			if SIZE*math.cos(get_distance(x/SIZE,z,100,-1000)) - land_base > SIZE then
 				land_base = land_base + SIZE/5*math.sin(get_distance(x,z,12*z,-51*x)/SIZE)
 			end
-			if math.sin(x/SIZE) + math.sin(z/SIZE) > 0 then
-				land_base = land_base + (math.sin(x/SIZE) + math.sin(z/SIZE))*SIZE
-			end
 			land_base = math.floor(land_base)
 			local beach = math.floor(SIZE/97*math.cos((x - z)*10/(SIZE))) -- Also used for ice
 			for y=minp.y,maxp.y do
 				local p_pos = area:index(x, y, z)
 				if y < land_base - 1 then
 					data[p_pos] = c_stone
-				elseif y == land_base + 1 and y > beach + 1 and y < beach + h.ice and y > h.sea then
-					data[p_pos] = c_grass
 				elseif y == land_base then
 					if y > beach + h.ice then
 						data[p_pos] = c_snow
-					elseif y >= beach then
+					elseif y >= beach + h.sea then
 						if y >= h.sea - 1 then
 							data[p_pos] = c_dirt_with_grass
 						else
@@ -115,7 +107,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				elseif y == land_base - 1 then
 					if y > beach + h.ice then
 						data[p_pos] = c_ice
-					elseif y >= beach then
+					elseif y >= beach + h.sea then
 						data[p_pos] = c_dirt
 					else
 						data[p_pos] = c_sandstone
@@ -128,8 +120,8 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	end
 
 	vm:set_data(data)
---	vm:calc_lighting()
---	vm:update_liquids()
+	vm:calc_lighting()
+	vm:update_liquids()
 	vm:write_to_map()
 
 	local geninfo = string.format("[mg] done after: %.2fs", os.clock() - t1)
