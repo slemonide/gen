@@ -6,7 +6,7 @@ if not chunksize then
 end
 
 if not SIZE then
-	SIZE = -100
+	SIZE = -300
 end
 
 -- Safe size (positive and absolute)
@@ -20,16 +20,16 @@ h.ice = ssize * (3/4)
 --local recursion_depth = math.ceil(math.abs(SIZE)/10)
 
 local function do_ws_func(depth, a, x)
-	local n = x/(16*SIZE)
+	local n = x
 	local y = 0
 	for k=1,depth do
-		y = y + SIZE*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
+		y = y + (math.sin(math.pi * k^a * n)/(math.pi * k^a))
 	end
 	return y
 end
 
 local ws_lists = {}
-local function get_ws_list(a,x)
+local function get_ws_list(a, x, m)
         ws_lists[a] = ws_lists[a] or {}
         local v = ws_lists[a][x]
         if v then
@@ -37,19 +37,15 @@ local function get_ws_list(a,x)
         end
         v = {}
         for x=x,x + (chunksize*16 - 1) do
-		local y = do_ws_func(ssize, a, x)
+		local y = do_ws_func(ssize, a, x / m)
                 v[x] = y
         end
         ws_lists[a][x] = v
         return v
 end
 
-local function get_distance(x,z,x0,z0)
-	if not (x0 or z0) then
-		x0 = 0
-		z0 = 0
-	end
-	y = (((x - x0)/(SIZE))^2 + ((z - z0)/(SIZE))^2)^(1/2)
+local function get_distance(x,z)
+	y = (x^2 + z^2)^(1/2)
 	return y
 end
 
@@ -75,16 +71,16 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	local data = vm:get_data()
 	local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
 
-	local heightx = get_ws_list(3, minp.x)
-	local heightz = get_ws_list(5, minp.z)
+	local heightx = get_ws_list(3, minp.x, SIZE)
+	local heightz = get_ws_list(5, minp.z, SIZE)
 
-	local cave1x = get_ws_list(2, minp.x)
-	local cave1y = get_ws_list(5, minp.y)
-	local cave1z = get_ws_list(4, minp.z)
+	local cave1x = get_ws_list(2, minp.x, SIZE * 20)
+	local cave1y = get_ws_list(5, minp.y, SIZE * 20)
+	local cave1z = get_ws_list(4, minp.z, SIZE * 20)
 
-	local cave2x = get_ws_list(6, minp.x)
-	local cave2y = get_ws_list(3, minp.y)
-	local cave2z = get_ws_list(2.5, minp.z)
+	local cave2x = get_ws_list(6, minp.x, SIZE * 20)
+	local cave2y = get_ws_list(3, minp.y, SIZE * 20)
+	local cave2z = get_ws_list(2.5, minp.z, SIZE * 20)
 
 	for x=minp.x,maxp.x do
 		local cave1 = cave1x[x]
@@ -93,11 +89,14 @@ minetest.register_on_generated(function(minp, maxp, seed)
 		for z=minp.z,maxp.z do
 			local cave1 = cave1+cave1z[z]
 			local cave2 = cave2+cave2z[z]
+			local cave1 = SIZE/5 * cave1
+			local cave2 = SIZE/6 * cave2
 			local land_base = land_base + heightz[z]
-			land_base = land_base + SIZE/3*math.sin(get_distance(x,z))
-			if SIZE*math.cos(get_distance(x/SIZE,z,100,-1000)) - land_base > SIZE then
-				land_base = land_base + SIZE/5*math.sin(get_distance(x,z,12*z,-51*x)/SIZE)
+			land_base = land_base + 1/3*math.sin(get_distance(x/SIZE,z/SIZE))
+			if SIZE*math.cos(get_distance(x/SIZE,z)) - land_base > SIZE then
+				land_base = land_base + 1/5*math.sin(get_distance(x/SIZE,z/SIZE))
 			end
+			land_base = SIZE*land_base
 			land_base = math.floor(land_base)
 			local beach = math.floor(SIZE/97*math.cos((x - z)*10/(SIZE))) -- Also used for ice
 			local lower_ground, cave_in_ended
