@@ -146,7 +146,8 @@ minetest.register_on_generated(function(minp, maxp, seed)
 					end
 				end
 			end
-			if lower_ground then
+			if lower_ground
+			and lower_ground ~= minp.y then
 				-- a cave appeared on land_base
 				local y = lower_ground
 				local p_pos = area:index(x, y, z)
