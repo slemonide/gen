@@ -6,7 +6,7 @@ if not chunksize then
 end
 
 if not SIZE then
-	SIZE = -300
+	SIZE = -3000
 end
 
 -- Safe size (positive and absolute)
@@ -75,12 +75,12 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	local heightz = get_ws_list(5, minp.z, SIZE)
 
 	local cave1x = get_ws_list(2, minp.x, SIZE * 20)
-	local cave1y = get_ws_list(5, minp.y, SIZE * 20)
-	local cave1z = get_ws_list(4, minp.z, SIZE * 20)
+	local cave1y = get_ws_list(5, minp.y, SIZE * 10)
+	local cave1z = get_ws_list(4, minp.z, SIZE * 10)
 
 	local cave2x = get_ws_list(6, minp.x, SIZE * 20)
-	local cave2y = get_ws_list(3, minp.y, SIZE * 20)
-	local cave2z = get_ws_list(2.5, minp.z, SIZE * 20)
+	local cave2y = get_ws_list(3, minp.y, SIZE * 10)
+	local cave2z = get_ws_list(2.5, minp.z, SIZE * 10)
 
 	for x=minp.x,maxp.x do
 		local cave1 = cave1x[x]
@@ -89,12 +89,12 @@ minetest.register_on_generated(function(minp, maxp, seed)
 		for z=minp.z,maxp.z do
 			local cave1 = cave1+cave1z[z]
 			local cave2 = cave2+cave2z[z]
-			local cave1 = SIZE/5 * cave1
-			local cave2 = SIZE/6 * cave2
+			local cave1 = cave1
+			local cave2 = cave2
 			local land_base = land_base + heightz[z]
-			land_base = land_base + 1/3*math.sin(get_distance(x/SIZE,z/SIZE))
-			if SIZE*math.cos(get_distance(x/SIZE,z)) - land_base > SIZE then
-				land_base = land_base + 1/5*math.sin(get_distance(x/SIZE,z/SIZE))
+			land_base = land_base + 1/10*math.sin(get_distance(x/SIZE,z/SIZE))
+			if SIZE*math.cos(get_distance((x + 251534)/SIZE,z - 7249)) - land_base > SIZE then
+				land_base = land_base + 1/10*math.sin(get_distance((x + 1525)/SIZE,z/SIZE))
 			end
 			land_base = SIZE*land_base
 			land_base = math.floor(land_base)
@@ -108,6 +108,8 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				else
 					local cave1 = cave1+cave1y[y]
 					local cave2 = cave2+cave2y[y]
+					local cave1 = SIZE/4 * cave1
+					local cave2 = SIZE/4 * cave2
 					cave1 = cave1%2-1
 					cave2 = cave2%2-1
 					cave = (cave1 < 0.5 and cave1 > -0.5) and (cave2 < 0.5 and cave2 > -0.5)
