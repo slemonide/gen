@@ -30,18 +30,27 @@ end
 
 local ws_lists = {}
 local function get_ws_list(a, x, m)
-        ws_lists[a] = ws_lists[a] or {}
-        local v = ws_lists[a][x]
-        if v then
-                return v
-        end
-        v = {}
-        for x=x,x + (chunksize*16 - 1) do
+	local v = ws_lists[a]
+	if v then
+		v = v[m]
+		if v then
+			v = v[x]
+			if v then
+				return v
+			end
+		else
+			ws_lists[a][m] = {}
+		end
+	else
+		ws_lists[a] = {[m]={}}
+	end
+	v = {}
+	for x=x,x + (chunksize*16 - 1) do
 		local y = do_ws_func(ssize, a, x / m)
-                v[x] = y
-        end
-        ws_lists[a][x] = v
-        return v
+		v[x] = y
+	end
+	ws_lists[a][m][x] = v
+	return v
 end
 
 local function get_distance(x,z)
