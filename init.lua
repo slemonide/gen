@@ -6,7 +6,7 @@ if not chunksize then
 end
 
 if not SIZE then
-	SIZE = -3000
+	SIZE = 100
 end
 
 -- Safe size (positive and absolute)
@@ -22,8 +22,9 @@ h.ice = ssize * (3/4)
 local function do_ws_func(depth, a, x)
 	local n = x
 	local y = 0
+	local K = math.floor(math.abs(n))
 	for k=1,depth do
-		y = y + (math.sin(math.pi * k^a * n)/(math.pi * k^a))
+		y = y + (-1)^K*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
 	end
 	return y
 end
