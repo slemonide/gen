@@ -24,9 +24,9 @@ local function do_ws_func(depth, a, x)
 	local y = 0
 	local K = math.floor(math.abs(n))
 	for k=1,depth do
-		y = y + (-1)^K*(math.sin(math.pi * k^a * n)/(math.pi * k^a))
+		y = y + math.sin(math.pi * k^a * n)/(math.pi * k^a)
 	end
-	return y
+	return (-1)^K*y
 end
 
 local ws_lists = {}
