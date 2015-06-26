@@ -13,20 +13,22 @@ end
 local ssize = math.ceil(math.abs(SIZE))
 
 -- Heights
-local h = {}
-h.sea = 0
-h.ice = ssize * (3/4)
+local h = {
+	sea = 0,
+	ice = ssize * 3/4
+}
 
 --local recursion_depth = math.ceil(math.abs(SIZE)/10)
 
 local function do_ws_func(depth, a, x)
-	local n = x
 	local y = 0
-	local K = math.floor(math.abs(n))
 	for k=1,depth do
-		y = y + math.sin(math.pi * k^a * n)/(math.pi * k^a)
+		y = y + math.sin(math.pi * k^a * x)/(k^a)
 	end
-	return (-1)^K*y
+	if math.floor(math.abs(x))%2 == 1 then
+		y = -y
+	end
+	return y/math.pi
 end
 
 local ws_lists = {}
@@ -54,10 +56,7 @@ local function get_ws_list(a, x, m)
 	return v
 end
 
-local function get_distance(x,z)
-	y = (x^2 + z^2)^(1/2)
-	return y
-end
+local get_distance = math.hypot
 
 local c_water = minetest.get_content_id("default:water_source")
 local c_stone = minetest.get_content_id("default:stone")
