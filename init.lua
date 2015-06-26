@@ -98,15 +98,12 @@ minetest.register_on_generated(function(minp, maxp, seed)
 		for z=minp.z,maxp.z do
 			local cave1 = cave1+cave1z[z]
 			local cave2 = cave2+cave2z[z]
-			local cave1 = cave1
-			local cave2 = cave2
 			local land_base = land_base + heightz[z]
 			land_base = land_base + 1/10*math.sin(get_distance(x/SIZE,z/SIZE))
 			if SIZE*math.cos(get_distance((x + 251534)/SIZE,z - 7249)) - land_base > SIZE then
 				land_base = land_base + 1/10*math.sin(get_distance((x + 1525)/SIZE,z/SIZE))
 			end
-			land_base = SIZE*land_base
-			land_base = math.floor(land_base)
+			land_base = math.floor(SIZE*land_base)
 			local beach = math.floor(SIZE/97*math.cos((x - z)*10/(SIZE))) -- Also used for ice
 			local lower_ground, cave_in_ended
 			for y=maxp.y,minp.y,-1 do
@@ -115,12 +112,8 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				and y > land_base then
 					data[p_pos] = c_water
 				else
-					local cave1 = cave1+cave1y[y]
-					local cave2 = cave2+cave2y[y]
-					local cave1 = SIZE/4 * cave1
-					local cave2 = SIZE/4 * cave2
-					cave1 = cave1%2-1
-					cave2 = cave2%2-1
+					local cave1 = (SIZE/4 * (cave1+cave1y[y]))%2-1
+					local cave2 = (SIZE/4 * (cave2+cave2y[y]))%2-1
 					cave = (cave1 < 0.5 and cave1 > -0.5) and (cave2 < 0.5 and cave2 > -0.5)
 					if not cave then
 						if y < land_base - 1 then
@@ -178,13 +171,17 @@ minetest.register_on_generated(function(minp, maxp, seed)
 		end
 	end
 
+	local t2 = os.clock()
+	local calcdelay = string.format("%.2fs", t2 - t1)
+
 	vm:set_data(data)
 	vm:set_lighting({day=0, night=0})
 	vm:calc_lighting()
 	vm:update_liquids()
 	vm:write_to_map()
 
-	local geninfo = string.format("[mg] done after: %.2fs", os.clock() - t1)
+	local t3 = os.clock()
+	local geninfo = "[mg] done after ca.: "..calcdelay.." + "..string.format("%.2fs", t3 - t2).." = "..string.format("%.2fs", t3 - t1)
 	print(geninfo)
 	minetest.chat_send_all(geninfo)
 end)
