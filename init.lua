@@ -6,8 +6,10 @@ if not chunksize then
 end
 
 if not SIZE then
-	SIZE = 100
+	SIZE = 3000
 end
+
+local CAVESIZE = 3000
 
 -- Safe size (positive and absolute)
 local ssize = math.ceil(math.abs(SIZE))
@@ -80,16 +82,16 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	local data = vm:get_data()
 	local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
 
-	local heightx = get_ws_list(3, minp.x, SIZE)
-	local heightz = get_ws_list(5, minp.z, SIZE)
+	local heightx = get_ws_list(3, minp.x, SIZE * 20)
+	local heightz = get_ws_list(5, minp.z, SIZE * 20)
 
-	local cave1x = get_ws_list(2, minp.x, SIZE * 20)
-	local cave1y = get_ws_list(5, minp.y, SIZE * 10)
-	local cave1z = get_ws_list(4, minp.z, SIZE * 10)
+	local cave1x = get_ws_list(2, minp.x, CAVESIZE * 20)
+	local cave1y = get_ws_list(5, minp.y, CAVESIZE * 10)
+	local cave1z = get_ws_list(4, minp.z, CAVESIZE * 10)
 
-	local cave2x = get_ws_list(6, minp.x, SIZE * 20)
-	local cave2y = get_ws_list(3, minp.y, SIZE * 10)
-	local cave2z = get_ws_list(2.5, minp.z, SIZE * 10)
+	local cave2x = get_ws_list(6, minp.x, CAVESIZE * 20)
+	local cave2y = get_ws_list(3, minp.y, CAVESIZE * 10)
+	local cave2z = get_ws_list(2.5, minp.z, CAVESIZE * 10)
 
 	for x=minp.x,maxp.x do
 		local cave1 = cave1x[x]
@@ -112,8 +114,8 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				and y > land_base then
 					data[p_pos] = c_water
 				else
-					local cave1 = (SIZE/4 * (cave1+cave1y[y]))%2-1
-					local cave2 = (SIZE/4 * (cave2+cave2y[y]))%2-1
+					local cave1 = (CAVESIZE/4 * (cave1+cave1y[y]))%2-1
+					local cave2 = (CAVESIZE/4 * (cave2+cave2y[y]))%2-1
 					cave = (cave1 < 0.5 and cave1 > -0.5) and (cave2 < 0.5 and cave2 > -0.5)
 					if not cave then
 						if y < land_base - 1 then
