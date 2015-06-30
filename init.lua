@@ -6,7 +6,7 @@ if not chunksize then
 end
 
 if not SIZE then
-	SIZE = 3000
+	SIZE = 1000
 end
 
 local CAVESIZE = 3000
