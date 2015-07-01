@@ -102,9 +102,17 @@ minetest.register_on_generated(function(minp, maxp, seed)
 			local cave2 = cave2+cave2z[z]
 			local land_base = land_base + heightz[z]
 			land_base = land_base + 1/10*math.sin(get_distance(x/SIZE,z/SIZE))
+--[[
 			if SIZE*math.cos(get_distance((x + 251534)/SIZE,z - 7249)) - land_base > SIZE then
 				land_base = land_base + 1/10*math.sin(get_distance((x + 1525)/SIZE,z/SIZE))
 			end
+			river = false
+			river_base = math.sin(x/SIZE + math.sin(z/SIZE))
+			if river_base <= 0 then
+				river = true
+				land_base = land_base + river_base
+			end
+--]]
 			land_base = math.floor(SIZE*land_base)
 			local beach = math.floor(SIZE/97*math.cos((x - z)*10/(SIZE))) -- Also used for ice
 			local lower_ground, cave_in_ended
