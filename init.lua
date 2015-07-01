@@ -34,7 +34,10 @@ local function do_ws_func(depth, a, x)
 end
 
 local ws_lists = {}
-local function get_ws_list(a, x, m)
+local function get_ws_list(a, x, m, depth)
+	if not depth then
+		depth = ssize
+	end
 	local v = ws_lists[a]
 	if v then
 		v = v[m]
@@ -51,7 +54,7 @@ local function get_ws_list(a, x, m)
 	end
 	v = {}
 	for x=x,x + (chunksize*16 - 1) do
-		local y = do_ws_func(ssize, a, x / m)
+		local y = do_ws_func(depth, a, x / m)
 		v[x] = y
 	end
 	ws_lists[a][m][x] = v
@@ -85,13 +88,13 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	local heightx = get_ws_list(3, minp.x, SIZE * 20)
 	local heightz = get_ws_list(5, minp.z, SIZE * 20)
 
-	local cave1x = get_ws_list(2, minp.x, CAVESIZE * 20)
-	local cave1y = get_ws_list(5, minp.y, CAVESIZE * 10)
-	local cave1z = get_ws_list(4, minp.z, CAVESIZE * 10)
+	local cave1x = get_ws_list(2, minp.x, CAVESIZE * 20, CAVESIZE)
+	local cave1y = get_ws_list(5, minp.y, CAVESIZE * 10, CAVESIZE)
+	local cave1z = get_ws_list(4, minp.z, CAVESIZE * 10, CAVESIZE)
 
-	local cave2x = get_ws_list(6, minp.x, CAVESIZE * 20)
-	local cave2y = get_ws_list(3, minp.y, CAVESIZE * 10)
-	local cave2z = get_ws_list(2.5, minp.z, CAVESIZE * 10)
+	local cave2x = get_ws_list(6, minp.x, CAVESIZE * 20, CAVESIZE)
+	local cave2y = get_ws_list(3, minp.y, CAVESIZE * 10, CAVESIZE)
+	local cave2z = get_ws_list(2.5, minp.z, CAVESIZE * 10, CAVESIZE)
 
 	for x=minp.x,maxp.x do
 		local cave1 = cave1x[x]
@@ -102,17 +105,6 @@ minetest.register_on_generated(function(minp, maxp, seed)
 			local cave2 = cave2+cave2z[z]
 			local land_base = land_base + heightz[z]
 			land_base = land_base + 1/10*math.sin(get_distance(x/SIZE,z/SIZE))
---[[
-			if SIZE*math.cos(get_distance((x + 251534)/SIZE,z - 7249)) - land_base > SIZE then
-				land_base = land_base + 1/10*math.sin(get_distance((x + 1525)/SIZE,z/SIZE))
-			end
-			river = false
-			river_base = math.sin(x/SIZE + math.sin(z/SIZE))
-			if river_base <= 0 then
-				river = true
-				land_base = land_base + river_base
-			end
---]]
 			land_base = math.floor(SIZE*land_base)
 			local beach = math.floor(SIZE/97*math.cos((x - z)*10/(SIZE))) -- Also used for ice
 			local lower_ground, cave_in_ended
