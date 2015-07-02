@@ -71,9 +71,17 @@ local c_sand = minetest.get_content_id("default:sand")
 local c_sandstone = minetest.get_content_id("default:sandstone")
 local c_snow = minetest.get_content_id("default:snowblock")
 local c_ice = minetest.get_content_id("default:ice")
+-- Trees
 local c_sapling = minetest.get_content_id("default:sapling")
 local c_junglesapling = minetest.get_content_id("default:junglesapling")
 local c_pinesapling = minetest.get_content_id("default:pine_sapling")
+-- Flowers
+local c_viola = minetest.get_content_id("flowers:viola")
+local c_tulip = minetest.get_content_id("flowers:tulip")
+local c_rose = minetest.get_content_id("flowers:rose")
+local c_geranium = minetest.get_content_id("flowers:geranium")
+local c_dandelion_yellow = minetest.get_content_id("flowers:dandelion_yellow")
+local c_dandelion_white = minetest.get_content_id("flowers:dandelion_white")
 
 minetest.register_on_generated(function(minp, maxp, seed)
 
@@ -146,15 +154,27 @@ minetest.register_on_generated(function(minp, maxp, seed)
 						elseif y == land_base + 1 then
 							local x = x * math.pi/12
 							local z = z * math.pi/12
-							local grid = math.sin(x) + math.sin(z)
+							local grid = 2*(math.sin(x) + math.sin(z))
 							if y < beach + h.ice
 							and y > beach + h.sea then
-								if grid == 2 then
+								if grid == 4 then
 									data[p_pos] = c_sapling
-								elseif grid == 1 then
+								elseif grid == 3 then
 									data[p_pos] = c_junglesapling
-								elseif grid == 0 then
+								elseif grid == 2 then
 									data[p_pos] = c_pinesapling
+								elseif grid == 1 then
+									data[p_pos] = c_viola
+								elseif grid == 0 then
+									data[p_pos] = c_tulip
+								elseif grid == -1 then
+									data[p_pos] = c_rose
+								elseif grid == -2 then
+									data[p_pos] = c_geranium
+								elseif grid == -3 then
+									data[p_pos] = c_dandelion_yellow
+								elseif grid == -4 then
+									data[p_pos] = c_dandelion_white
 								end
 							end
 						end
