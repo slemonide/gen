@@ -20,6 +20,11 @@ local h = {
 	ice = ssize * 3/4
 }
 
+local function simplf(x)
+	y = math.abs(math.ceil(x))
+	return y
+end
+
 --local recursion_depth = math.ceil(math.abs(SIZE)/10)
 
 local function do_ws_func(depth, a, x)
@@ -135,7 +140,9 @@ minetest.register_on_generated(function(minp, maxp, seed)
 							if y > beach + h.ice then
 								data[p_pos] = c_snow
 							elseif y >= beach + h.sea then
-								if y >= h.sea - 1 then
+								if simplf(math.sin(y)) == land_base then
+									data[p_pos] = c_water
+								elseif y >= h.sea - 1 then
 									data[p_pos] = c_dirt_with_grass
 								else
 									data[p_pos] = c_dirt
