@@ -71,6 +71,9 @@ local c_sand = minetest.get_content_id("default:sand")
 local c_sandstone = minetest.get_content_id("default:sandstone")
 local c_snow = minetest.get_content_id("default:snowblock")
 local c_ice = minetest.get_content_id("default:ice")
+local c_sapling = minetest.get_content_id("default:sapling")
+local c_junglesapling = minetest.get_content_id("default:junglesapling")
+local c_pinesapling = minetest.get_content_id("default:pine_sapling")
 
 minetest.register_on_generated(function(minp, maxp, seed)
 
@@ -139,6 +142,20 @@ minetest.register_on_generated(function(minp, maxp, seed)
 								data[p_pos] = c_dirt
 							else
 								data[p_pos] = c_sandstone
+							end
+						elseif y == land_base + 1 then
+							local x = x * math.pi/12
+							local z = z * math.pi/12
+							local grid = math.sin(x) + math.sin(z)
+							if y < beach + h.ice
+							and y > beach + h.sea then
+								if grid == 2 then
+									data[p_pos] = c_sapling
+								elseif grid == 1 then
+									data[p_pos] = c_junglesapling
+								elseif grid == 0 then
+									data[p_pos] = c_pinesapling
+								end
 							end
 						end
 						if lower_ground then
